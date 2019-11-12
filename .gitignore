@@ -1,0 +1,5 @@
+# Don't track content of these folders
+kafka.pubsub.console/.vs
+kafka.pubsub.console/.vscode
+kafka.pubsub.console/bin
+kafka.pubsub.console/obj
