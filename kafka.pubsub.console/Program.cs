@@ -8,32 +8,30 @@ using Confluent.Kafka.Serialization;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace kafka.pubsub.console
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            bool cancel = false;
-
             IConfiguration config = new ConfigurationBuilder()
                   .AddJsonFile("appsettings.json", true, true)
                   .Build();
 
-            var host = new HostBuilder()
-                  .ConfigureLogging(logging => logging.AddConsole())
-                  .ConfigureServices(services =>
-                  {
-                      services.AddKafka(config);
-                  })
-                  .UseConsoleLifetime()
-                  .Build()
-                  .RunAsync();
 
-            Console.ReadLine();
+            using (var _host = new HostBuilder()
+                .ConfigureLogging(logging => logging.AddConsole())
+                .ConfigureServices(services =>
+                {
+                    services.AddKafka(config);
+                })
+                .Build())
+            {
+                _host.Run();
+            }
         }
-
-
     }
 }

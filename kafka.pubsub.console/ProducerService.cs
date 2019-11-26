@@ -33,13 +33,14 @@ namespace kafka.pubsub.console
         public override void Dispose()
         {
             Console.WriteLine("Producer: disposing....");
-            _producer.Flush();
+            _producer.Flush(500);
             _producer.Dispose();
             base.Dispose();
         }
 
         protected override async Task ExecuteAsync(CancellationToken stopToken)
         {
+            _logger.LogInformation("Producer: awaiting msg....");
             //Async loop
             while (!stopToken.IsCancellationRequested)
             {
@@ -53,7 +54,15 @@ namespace kafka.pubsub.console
 
         private async Task SendMsg(string message)
         {
-            await _producer.ProduceAsync(_topic, null, message);            
+            try
+            {
+                await _producer.ProduceAsync(_topic, null, message);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex,$"{nameof(SendMsg)} failed.");
+            }
+                       
         }
     }
 }
